@@ -4,7 +4,28 @@
 	<meta charset="UTF-8">
 	<title>Neural Racing</title>
 	<link rel="stylesheet" href="https://gymburgdorf-ef23.github.io/helpers/basicstyle.css"></link>
-	<link rel="stylesheet" href="NeuralRacer.css"></link>
+	<style>
+		html {
+			--wfull: min(100vw, 800px);
+			--w: calc(var(--wfull) - 2em);
+			--hsvg: calc(var(--w) * 0.375);
+		}
+
+		body {width: var(--w); margin: auto; padding-bottom: 6em;}
+
+		.drawing {
+				width: var(--w);
+				height: var(--hsvg);
+		}
+
+		path {stroke: rgb(87, 87, 87); fill: none; stroke-linejoin: round;}
+		.scan {stroke: rgb(255, 157, 157);}
+
+		h2 {margin-top: 2em;;}
+		.explanation {
+				width: 80%; margin: auto;
+		}
+	</style>
 </head>
 <body>
 	<h1>Neural Racing</h1>
@@ -49,6 +70,15 @@
 		<li>Aufbau eines neuronalen Netzes mit den 6 Inputs</li>
 		<li>Neuroevolution oder Backpropagation-Training?</li>
 	</ul>
+	<h2>TODO 2</h2>
+	<ull>
+		<li>Neuroevelution: Das Netzwerk soll folgende Methoden erhalten<br>
+		<code>nn.clone()</code>
+		<code>nn.randomAdjust(howmuch)</code>
+		</li>
+		<li>Dann kann es mit dem Trainieren losgehen!</li>
+	</ul>
+
 
 </body>
 </html>
