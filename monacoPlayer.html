@@ -12,29 +12,82 @@
 	<div class="score"></div>
 	<div class="output"></div>
 	<script src="Track.js"></script>
+	<script src="NeuralNet.js"></script>
 	<script src="TrackRenderer.js"></script>
 	<script src="Monaco.js"></script>
 	<script src="Car.js"></script>
 	<script src="CarRenderer.js"></script>
 	<script src="CarPlayer.js"></script>
+	<script src="CarAI.js"></script>
 	<script>
 
 	const track = setupMonaco()
-	const car = new CarPlayer(track)
-	const carRenderer = new CarRenderer(track)
 
-	function step() {
-		car.move()
-		carRenderer.render(car, true)
-		if(car.checkCollision()) {
-			alert("game over")
-		}
-		else {
+	const cars = []
+	const scores = []
+	const steps = []
+
+	const defScore = -99
+	var currentIndex = 0
+
+	// add many cars
+	for(var x = 0; x < 3; x++) {
+		const car = new CarAI(track)
+		// const car = new CarPlayer(track)
+	
+		cars.push(car)	
+		myIndex = (currentIndex++)
+		console.log("MyIndex " + myIndex)
+
+		const carRenderer = new CarRenderer(track)
+
+		function step() {
+			
+			car.move()
+			carRenderer.render(car, true)
+			if(car.checkCollision()) {
+				// car is dead
+				scores[myIndex] = car.updateScore()
+				console.log("Score " + myIndex + " " + car.updateScore())
+
+				found = false
+				largestIndex = 0
+				largestScore = 0
+				for(var index = 0; index < scores.length; index++){
+					x = scores[index]
+					if(x === defScore){
+						found = true
+						console.log(index + " " + x)
+						break
+					}
+					if(x > largestScore){
+						largestScore = x
+						largestIndex = index
+					}
+				}
+				
+				if(!found){
+					winner = cars[largestIndex]
+
+					for(var index = 0; index < cars.length; index++){
+						x = cars[index]
+						if(x != winner) {
+							x.nn = winner.nn.clone()
+							x.nn.noise()
+						}
+						requestAnimationFrame(steps[index])
+					}
+				}
+
+				car.reset()
+			} else 
 			requestAnimationFrame(step)
 		}
+		steps.push(step)
+
+		step()
 	}
 
-	step()
 
 	</script>
 </body>

@@ -1,6 +1,7 @@
 class NeuralNet {
 
-    constructor(){ 
+    constructor(seed){
+        this.seed = seed; 
         this.layers = []
         this.biases = []
         this.weights = []
@@ -8,10 +9,14 @@ class NeuralNet {
     }
 
     clone() {
-        const clone = JSON.parse(JSON.stringify(this));
-        // Copy funtions, as they are nod stringified
-        clone.activations = this.activations;
-        return clone;
+        const newNet = new NeuralNet()
+        newNet.layers = this.layers.slice(0)
+        newNet.biases = this.biases.slice(0)
+        newNet.weights = this.weights.slice(0)
+        newNet.activations = this.activations.slice(0)
+        newNet.seed = Math.floor(this.seed * 10000 * Math.random())
+
+        return newNet;
     }
 
     addLayer(size, activation) {
@@ -50,10 +55,15 @@ class NeuralNet {
         return values
     }
 
-    noise(noiseFunction) {
-        for(x = 0; x < this.weights.length; x++) {
-            for(y = 0; x < weights[x].length; y++) {
-                this.weights[x][y] = noiseFunction(this.weights[x][y])
+    random() {
+        this.seed = Math.sin(this.seed) * 10000
+        return this.seed - Math.round(this.seed)
+    };
+
+    noise() {
+        for(var x = 0; x < this.weights.length; x++) {
+            for(var y = 0; y < this.weights[x].length; y++) {
+                this.weights[x][y] = this.weights[x][y] + this.random()
             }
         }
     }
@@ -61,19 +71,4 @@ class NeuralNet {
 }
 
 
-activation = {
-    relu: (n) => {
-        if(n < 0)
-            return 0
-        return n
-    }
-}
 
-net = new NeuralNet()
-
-net.addLayer(6, activation.relu)
-net.addLayer(4, activation.relu)
-net.addLayer(2, activation.relu)
-
-result = net.feedForward([.5, .5, .5, .5, .5, .5])
-console.log(result)
