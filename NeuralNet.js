@@ -1,7 +1,6 @@
 class NeuralNet {
 
-    constructor(seed){
-        this.seed = seed; 
+    constructor(){
         this.layers = []
         this.biases = []
         this.weights = []
@@ -10,13 +9,25 @@ class NeuralNet {
 
     clone() {
         const newNet = new NeuralNet()
-        newNet.layers = this.layers.slice(0)
-        newNet.biases = this.biases.slice(0)
-        newNet.weights = this.weights.slice(0)
-        newNet.activations = this.activations.slice(0)
-        newNet.seed = Math.floor(this.seed * 10000 * Math.random())
+        newNet.layers = this._cloneArray(this.layers)
+        newNet.biases = this._cloneArray(this.biases)
+        newNet.weights = this._cloneArray(this.weights)
+        newNet.activations = this.activations
+        newNet.random = this.random
 
         return newNet;
+    }
+
+    _cloneArray(array) {
+        const arr = []
+        for(var i = 0; i < array.length; i++){
+            const element = array[i]
+            if(Array.isArray(element))
+                arr.push(this._cloneArray(element))
+            else
+                arr.push(element.valueOf())
+        }
+        return arr
     }
 
     addLayer(size, activation) {
@@ -55,15 +66,17 @@ class NeuralNet {
         return values
     }
 
-    random() {
-        this.seed = Math.sin(this.seed) * 10000
-        return this.seed - Math.round(this.seed)
-    };
+    
 
     noise() {
         for(var x = 0; x < this.weights.length; x++) {
             for(var y = 0; y < this.weights[x].length; y++) {
-                this.weights[x][y] = this.weights[x][y] + this.random()
+                this.weights[x][y] += + Math.random()
+            }
+        }
+        for(var x = 0; x < this.biases.length; x++) {
+            for(var y = 0; y < this.biases[x].length; y++){
+                this.biases[x][y] += Math.random() 
             }
         }
     }

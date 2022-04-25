@@ -14,22 +14,13 @@ class CarAI extends Car {
 		
 		super(track)
 
-		this.nn = new NeuralNet(Math.round(Math.random() * 10000))
+		this.nn = new NeuralNet()
 		
 		this.nn.addLayer(6, relu)
 		this.nn.addLayer(4, relu)
 		this.nn.addLayer(2, sigmoid)
 
 		this.nn.noise()
-	}
-
-	reset() {
-		super.reset()
-
-		// learn here
-		if(this.nn) {
-			this.nn.noise()
-		}
 	}
 
 	move() {

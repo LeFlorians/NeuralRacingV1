@@ -23,32 +23,44 @@
 
 	const track = setupMonaco()
 
+	const maxMoves = 100
+	const nCars = 3
+
 	const cars = []
 	const scores = []
 	const steps = []
+
+	var moves = 0
 
 	const defScore = -99
 	var currentIndex = 0
 
 	// add many cars
-	for(var x = 0; x < 3; x++) {
+	for(var x = 0; x < nCars; x++) {
 		const car = new CarAI(track)
 		// const car = new CarPlayer(track)
-	
+		
+		scores.push(defScore)
 		cars.push(car)	
-		myIndex = (currentIndex++)
-		console.log("MyIndex " + myIndex)
 
 		const carRenderer = new CarRenderer(track)
 
-		function step() {
-			
+		const myIndex = currentIndex++
+
+		step = () => {
+
 			car.move()
+
+			car.updateScore()
+
+			const done = ((++moves) >= nCars * maxMoves)
+			if(done)
+				moves = 0
+
 			carRenderer.render(car, true)
-			if(car.checkCollision()) {
+			if(car.checkCollision() || done) {
 				// car is dead
-				scores[myIndex] = car.updateScore()
-				console.log("Score " + myIndex + " " + car.updateScore())
+				scores[myIndex] = car.score
 
 				found = false
 				largestIndex = 0
@@ -57,29 +69,32 @@
 					x = scores[index]
 					if(x === defScore){
 						found = true
-						console.log(index + " " + x)
 						break
 					}
 					if(x > largestScore){
+						console.log(largestScore)
 						largestScore = x
 						largestIndex = index
 					}
 				}
 				
-				if(!found){
+				if(!found || done){
+					console.log("Largest score: " + largestIndex + ": " + largestScore);
 					winner = cars[largestIndex]
 
 					for(var index = 0; index < cars.length; index++){
 						x = cars[index]
-						if(x != winner) {
+						if(index != largestIndex) {
 							x.nn = winner.nn.clone()
+							
 							x.nn.noise()
 						}
+						scores[index] = defScore
+						x.reset()
 						requestAnimationFrame(steps[index])
 					}
 				}
 
-				car.reset()
 			} else 
 			requestAnimationFrame(step)
 		}
