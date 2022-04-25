@@ -9,6 +9,8 @@ class Car {
 		id += 1
 		this.reset()
 		this.ready = true
+
+		this.steps = 0
 	}
 
 	reset() {
@@ -21,6 +23,8 @@ class Car {
 		this.steer = 0
 		this.score = 0
 		this.scoreUntil = 0
+
+		this.steps = 0
 	}
 
 	move() {
@@ -29,6 +33,8 @@ class Car {
 		this.rot = (this.rot + 0.03 * this.steer * Math.sign(this.v)) % (2*Math.PI)
 		this.x += Math.cos(this.rot) * this.v * dt
 		this.y += Math.sin(this.rot) * this.v * dt
+
+		this.steps += 1
 	}
 
 	checkCollision() {
@@ -38,6 +44,7 @@ class Car {
 	updateScore() {
 		//this.score += 0.01 * ((0.45*this.track.width)**2 - this.track.getOffset(this.x, this.y)) + 0.15 * this.v
 		//this.score += 0.0001 * this.v ** 2
+
 		const checkPoint = this.track.getCheckPoint(this.x, this.y)
 		if(checkPoint > this.scoreUntil && checkPoint < this.scoreUntil + 5) {
 			this.score += checkPoint - this.scoreUntil

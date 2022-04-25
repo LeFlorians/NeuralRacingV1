@@ -5,6 +5,8 @@ class NeuralNet {
         this.biases = []
         this.weights = []
         this.activations = []
+
+        this.random = 0
     }
 
     clone() {
@@ -43,8 +45,10 @@ class NeuralNet {
         this.activations.push(activation)
     }
 
+
     feedForward(input) {
         var values = input
+
         for(var i = 0; i < values.length; i++){
             values[i] = this.activations[0](values[i])
         }
@@ -68,15 +72,15 @@ class NeuralNet {
 
     
 
-    noise() {
+    noise(noiseFactor=1) {
         for(var x = 0; x < this.weights.length; x++) {
             for(var y = 0; y < this.weights[x].length; y++) {
-                this.weights[x][y] += + Math.random()
+                this.weights[x][y] += (Math.random() * 2 - 1) * noiseFactor
             }
         }
         for(var x = 0; x < this.biases.length; x++) {
             for(var y = 0; y < this.biases[x].length; y++){
-                this.biases[x][y] += Math.random() 
+                this.biases[x][y] += (Math.random() * 2 - 1) * noiseFactor
             }
         }
     }

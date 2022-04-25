@@ -23,86 +23,84 @@
 
 	const track = setupMonaco()
 
-	const maxMoves = 100
-	const nCars = 3
+	const maxMoves = 1000
+	const nCars = 10
 
 	const cars = []
-	const scores = []
-	const steps = []
 
 	var moves = 0
 
 	const defScore = -99
 	var currentIndex = 0
 
-	// add many cars
-	for(var x = 0; x < nCars; x++) {
-		const car = new CarAI(track)
-		// const car = new CarPlayer(track)
-		
-		scores.push(defScore)
-		cars.push(car)	
-
-		const carRenderer = new CarRenderer(track)
-
-		const myIndex = currentIndex++
-
-		step = () => {
-
-			car.move()
-
-			car.updateScore()
-
-			const done = ((++moves) >= nCars * maxMoves)
-			if(done)
-				moves = 0
-
-			carRenderer.render(car, true)
-			if(car.checkCollision() || done) {
-				// car is dead
-				scores[myIndex] = car.score
-
-				found = false
-				largestIndex = 0
-				largestScore = 0
-				for(var index = 0; index < scores.length; index++){
-					x = scores[index]
-					if(x === defScore){
-						found = true
-						break
-					}
-					if(x > largestScore){
-						console.log(largestScore)
-						largestScore = x
-						largestIndex = index
-					}
-				}
-				
-				if(!found || done){
-					console.log("Largest score: " + largestIndex + ": " + largestScore);
-					winner = cars[largestIndex]
-
-					for(var index = 0; index < cars.length; index++){
-						x = cars[index]
-						if(index != largestIndex) {
-							x.nn = winner.nn.clone()
-							
-							x.nn.noise()
-						}
-						scores[index] = defScore
-						x.reset()
-						requestAnimationFrame(steps[index])
-					}
-				}
-
-			} else 
-			requestAnimationFrame(step)
-		}
-		steps.push(step)
-
-		step()
+	// create cars
+	for(var i = 0; i < nCars; i++) {
+		cars[i] = new CarAI(track)
+		cars[i].renderer = new CarRenderer(track)
 	}
 
+	// move loop
+	loop = () => {
+		for(var i = 0; i < nCars; i++){
+			const car = cars[i]
+
+			if(!car.checkCollision())
+				car.move()
+
+			const prev_score = car.score
+			const score = car.updateScore()
+
+			console.log(prev_score + ", " + score)
+			if(score <= prev_score)
+				car.islost = true;
+
+
+			car.renderer.render(car, false)
+		}
+
+		// check if stuck/done
+		var done = true;
+		for(var i = 0; i < nCars; i++){
+			const car = cars[i]
+			if(!(car.checkCollision() || car.steps >= maxMoves) && !car.islost) {
+				done = false;
+				break
+			}
+		}
+
+		if(done) {
+			// check highest score
+			var winner = -1;
+			var highestScore = -999;
+
+			for(var i = 0; i < nCars; i++){
+				const car = cars[i];
+				if(car.score >= highestScore) {
+					winner = i;
+					highestScore = car.score;
+				}
+			}
+
+			if(winner == -1){
+				console.log("Error: no winner")
+				return;
+			}
+
+			console.log("Winner: "+i+" Score: " + highestScore)
+
+			for(var i = 0; i < nCars; i++){
+				const car = cars[i];
+				if(i != winner) {
+					car.nn = cars[winner].nn.clone()
+				}
+				car.nn.noise(.1)
+				car.reset()
+				car.islost = false;
+			}
+		}
+		requestAnimationFrame(loop)
+	}
+	loop()
 
 	</script>
 </body>

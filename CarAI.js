@@ -14,10 +14,12 @@ class CarAI extends Car {
 		
 		super(track)
 
+		this.score = -1
+
 		this.nn = new NeuralNet()
 		
-		this.nn.addLayer(6, relu)
-		this.nn.addLayer(4, relu)
+		this.nn.addLayer(6, sigmoid)
+		this.nn.addLayer(4, sigmoid)
 		this.nn.addLayer(2, sigmoid)
 
 		this.nn.noise()
