@@ -3,13 +3,20 @@ class CarAI extends Car {
 	constructor(track) {
 
 		const relu = (n) => {
-			if(n < 0)
-				return 0
+			if(n < -1)
+				return n / 100000
+			if(n > 1)
+				return n / 100000	
 			return n
 		}
 
 		const sigmoid = (n) => {
 			return 1 / (1 + Math.exp(-n))
+			// if(n >= 0) {
+			// 	return 1 / (1 + Math.exp(-n))
+			// } else {
+			// 	return 1 / (1 + Math.exp(n))
+			// }
 		}
 		
 		super(track)
@@ -18,8 +25,8 @@ class CarAI extends Car {
 
 		this.nn = new NeuralNet()
 		
-		this.nn.addLayer(6, sigmoid)
-		this.nn.addLayer(4, sigmoid)
+		this.nn.addLayer(6, relu)
+		this.nn.addLayer(4, relu)
 		this.nn.addLayer(2, sigmoid)
 
 		this.nn.noise()

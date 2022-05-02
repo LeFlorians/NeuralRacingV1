@@ -6,7 +6,6 @@ class NeuralNet {
         this.weights = []
         this.activations = []
 
-        this.random = 0
     }
 
     clone() {
@@ -15,7 +14,6 @@ class NeuralNet {
         newNet.biases = this._cloneArray(this.biases)
         newNet.weights = this._cloneArray(this.weights)
         newNet.activations = this.activations
-        newNet.random = this.random
 
         return newNet;
     }
@@ -73,16 +71,16 @@ class NeuralNet {
     
 
     noise(noiseFactor=1) {
-        for(var x = 0; x < this.weights.length; x++) {
-            for(var y = 0; y < this.weights[x].length; y++) {
-                this.weights[x][y] += (Math.random() * 2 - 1) * noiseFactor
-            }
-        }
-        for(var x = 0; x < this.biases.length; x++) {
-            for(var y = 0; y < this.biases[x].length; y++){
-                this.biases[x][y] += (Math.random() * 2 - 1) * noiseFactor
-            }
-        }
+
+        // choose a weight to change
+        const weightX = Math.round(random() * (this.weights.length - 1))
+        const weightY = Math.round(random() * (this.weights[weightX].length - 1))
+        this.weights[weightX][weightY] += (random() * 2 - 1) * noiseFactor;;
+
+        // same for a bias
+        const biasX = Math.round(random() * (this.biases.length - 1))
+        const biasY = Math.round(random() * (this.biases[biasX].length - 1))
+        this.biases[biasX][biasY] += (random() * 2 - 1) * noiseFactor;
     }
 
 }

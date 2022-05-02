@@ -11,6 +11,7 @@
 	<div class="wrap"><svg class="drawing" viewBox="0 0 800 300"></svg></div>
 	<div class="score"></div>
 	<div class="output"></div>
+	<script src="Random.js"></script>
 	<script src="Track.js"></script>
 	<script src="NeuralNet.js"></script>
 	<script src="TrackRenderer.js"></script>
@@ -21,14 +22,25 @@
 	<script src="CarAI.js"></script>
 	<script>
 
+	var manualStop = false;
+	window.addEventListener("keydown", (e) => {
+		if(e.key == " "){
+			manualStop = true;
+		}
+	})
+
 	const track = setupMonaco()
 
 	const maxMoves = 1000
-	const nCars = 10
+	const nCars = 50
 
 	const cars = []
 
 	var moves = 0
+	
+	var noise = 10
+	const noiseDecay = .99
+	const epochNoiseDecay = .96
 
 	const defScore = -99
 	var currentIndex = 0
@@ -50,7 +62,6 @@
 			const prev_score = car.score
 			const score = car.updateScore()
 
-			console.log(prev_score + ", " + score)
 			if(score <= prev_score)
 				car.islost = true;
 
@@ -60,7 +71,7 @@
 
 		// check if stuck/done
 		var done = true;
-		for(var i = 0; i < nCars; i++){
+		for(var i = 0; i < nCars && !manualStop; i++){
 			const car = cars[i]
 			if(!(car.checkCollision() || car.steps >= maxMoves) && !car.islost) {
 				done = false;
@@ -72,6 +83,8 @@
 			// check highest score
 			var winner = -1;
 			var highestScore = -999;
+
+			manualStop = false;
 
 			for(var i = 0; i < nCars; i++){
 				const car = cars[i];
@@ -86,14 +99,16 @@
 				return;
 			}
 
-			console.log("Winner: "+i+" Score: " + highestScore)
+			console.log("Winner: "+winner+" Score: " + highestScore)
+		
 
+			var epochNoise = (noise *= noiseDecay)
 			for(var i = 0; i < nCars; i++){
 				const car = cars[i];
 				if(i != winner) {
 					car.nn = cars[winner].nn.clone()
+					car.nn.noise(epochNoise *= epochNoiseDecay)
 				}
-				car.nn.noise(.1)
 				car.reset()
 				car.islost = false;
 			}

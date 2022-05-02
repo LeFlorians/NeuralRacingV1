@@ -28,7 +28,7 @@ class Car {
 	}
 
 	move() {
-		const dt = 0.1
+		const dt = 1
 		this.v = 0.99 * this.v + 0.08 * this.acc
 		this.rot = (this.rot + 0.03 * this.steer * Math.sign(this.v)) % (2*Math.PI)
 		this.x += Math.cos(this.rot) * this.v * dt
