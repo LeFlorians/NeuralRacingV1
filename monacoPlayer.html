@@ -31,16 +31,16 @@
 
 	const track = setupMonaco()
 
-	const maxMoves = 1000
+	const maxMoves = 10000
 	const nCars = 50
 
 	const cars = []
 
 	var moves = 0
 	
-	var noise = 10
+	var noise = 0.1
 	const noiseDecay = .99
-	const epochNoiseDecay = .96
+	const epochNoiseDecay = .9
 
 	const defScore = -99
 	var currentIndex = 0
@@ -49,10 +49,10 @@
 	for(var i = 0; i < nCars; i++) {
 		cars[i] = new CarAI(track)
 		cars[i].renderer = new CarRenderer(track)
+		cars[i].nn.noise(2)
 	}
 
-	// move loop
-	loop = () => {
+	step = () => {
 		for(var i = 0; i < nCars; i++){
 			const car = cars[i]
 
@@ -66,14 +66,14 @@
 				car.islost = true;
 
 
-			car.renderer.render(car, false)
+			//car.renderer.render(car, false)
 		}
 
 		// check if stuck/done
 		var done = true;
 		for(var i = 0; i < nCars && !manualStop; i++){
 			const car = cars[i]
-			if(!(car.checkCollision() || car.steps >= maxMoves) && !car.islost) {
+			if(!car.checkCollision() && car.steps < maxMoves) {
 				done = false;
 				break
 			}
@@ -112,6 +112,18 @@
 				car.reset()
 				car.islost = false;
 			}
+		}
+
+	}
+
+	// move loop
+	loop = () => {
+		for(let i = 0; i < 10; i++) {
+			step()
+		}
+		for(var i = 0; i < nCars; i++){
+			let car = cars[i]
+			car.renderer.render(car, false)
 		}
 		requestAnimationFrame(loop)
 	}

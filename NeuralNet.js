@@ -72,15 +72,16 @@ class NeuralNet {
 
     noise(noiseFactor=1) {
 
-        // choose a weight to change
-        const weightX = Math.round(random() * (this.weights.length - 1))
-        const weightY = Math.round(random() * (this.weights[weightX].length - 1))
-        this.weights[weightX][weightY] += (random() * 2 - 1) * noiseFactor;;
+        // choose some weights and biases to change
+        for(let i = 0; i < 30; i++){
+            const weightX = Math.round(random() * (this.weights.length - 1))
+            const weightY = Math.round(random() * (this.weights[weightX].length - 1))
+            this.weights[weightX][weightY] += (random() * 2 - 1) * noiseFactor;;
 
-        // same for a bias
-        const biasX = Math.round(random() * (this.biases.length - 1))
-        const biasY = Math.round(random() * (this.biases[biasX].length - 1))
-        this.biases[biasX][biasY] += (random() * 2 - 1) * noiseFactor;
+            const biasX = Math.round(random() * (this.biases.length - 1))
+            const biasY = Math.round(random() * (this.biases[biasX].length - 1))
+            this.biases[biasX][biasY] += (random() * 2 - 1) * noiseFactor;
+        }
     }
 
 }

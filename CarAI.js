@@ -4,9 +4,9 @@ class CarAI extends Car {
 
 		const relu = (n) => {
 			if(n < -1)
-				return n / 100000
+				return n / 100000 -1
 			if(n > 1)
-				return n / 100000	
+				return 1+n / 100000	
 			return n
 		}
 
