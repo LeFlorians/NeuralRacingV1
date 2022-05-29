@@ -47,10 +47,6 @@ class NeuralNet {
     feedForward(input) {
         var values = input
 
-        for(var i = 0; i < values.length; i++){
-            values[i] = this.activations[0](values[i])
-        }
-
         for(var i = 0; i < this.weights.length; i++) {
             const weights = this.weights[i]
 
@@ -61,7 +57,7 @@ class NeuralNet {
                 for(var y = 0; y < values.length; y++){
                     next_values[x] += weights[x * values.length + y] * values[y]
                 }
-                next_values[x] = this.activations[i+1](next_values[x])
+                next_values[x] = this.activations[i](next_values[x] + this.biases[i][x])
             }
             values = next_values
         }
