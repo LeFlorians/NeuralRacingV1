@@ -34,14 +34,15 @@ class Track {
 		let rx = Math.round(x)
 		let ry = Math.round(y)
 		let key = rx + "_" + ry
-		if(!(key in this.distCache)) {
-			this.distCache[key] = this.getExactOffset(rx, ry)
-		}
-		if(this.distCache[key] < 0.5*this.width - 0.7) {
-			return this.distCache[key]
-		}
-		return this.getExactOffset(x, y)
+		let cached = this.distCache[key]
+		if(cached && cached < .9 * this.width)
+			return cached
+		const dist = this.getExactOffset(x, y)
+		this.distCache[key] =
+			this.getExactOffset(rx, ry)
+		return dist;
 	}
+
 
 	scan(x0, y0, dir) {
 		const rmax = this.width / 2
